@@ -20,6 +20,10 @@ describe OAuth2::Model::ResourceOwner do
     it "returns the authorization" do
       @owner.grant_access!(@client).should be_kind_of(OAuth2::Model::Authorization)
     end
+
+    it "the authorization is saved" do
+      @owner.grant_access!(@client).new_record?.should be_false
+    end
     
     # This method must return the same owner object, since the assertion
     # handler may modify it -- either by changing its attributes or by extending
@@ -28,6 +32,11 @@ describe OAuth2::Model::ResourceOwner do
     it "sets the receiver as the authorization's owner" do
       authorization = @owner.grant_access!(@client)
       authorization.owner.should be_equal(@owner)
+    end
+
+    it "sets the client as the authorization's client" do
+      authorization = @owner.grant_access!(@client)
+      authorization.client.should be_equal(@client)
     end
   end
   
@@ -41,6 +50,16 @@ describe OAuth2::Model::ResourceOwner do
       @owner.grant_access!(@client)
     end
     
+    it "sets the receiver as the authorization's owner" do
+      authorization = @owner.grant_access!(@client)
+      authorization.owner.should be_equal(@owner)
+    end
+
+    it "sets the client as the authorization's client" do
+      authorization = @owner.grant_access!(@client)
+      authorization.client.should be_equal(@client)
+    end
+
     it "updates the authorization with scopes" do
       @owner.grant_access!(@client, :scopes => ['foo', 'bar'])
       @authorization.reload
